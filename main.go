@@ -13,8 +13,8 @@ import (
 
 var (
 	file	string //目标文件
-	key		string //匹配关键字
-	dir		string //临时文件
+	key	string //匹配关键字
+	dir	string //临时文件
 )
 
 func tmpfileWrite(tmpfilePath string,tmpString string) {
