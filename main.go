@@ -48,14 +48,14 @@ func readEachLineReader(filePath string,tmpfilePath string, keyString string) {
 		// func (b *Reader) ReadBytes(delim byte) (line []byte, err error)
 		// func (b *Reader) ReadString(delim byte) (line string, err error)
 		line, _, err := lineReader.ReadLine()
+		if err == io.EOF {
+			break
+		}
 		res := strings.Contains(string(line), keyString)
 		if res{	
 			fmt.Println(`del:`+string(line))			
 		}else{
 			tmpfileWrite(tmpfilePath,string(line))
-		}
-		if err == io.EOF {
-			break
 		}
 		//fmt.Println(string(line))
 	}
