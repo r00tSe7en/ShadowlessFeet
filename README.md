@@ -43,4 +43,6 @@ bbbbbbbbbbbb
 cccccccccccc
 dddddddddddd
 ```
+## 更新
 
+2022/11/15 - 重构代码逻辑，优化初始版本的大量重复开关文件操作，大文件处理速度得到明显提升。
