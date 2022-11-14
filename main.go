@@ -12,53 +12,52 @@ import (
 )
 
 var (
-	file	string //目标文件
-	key	string //匹配关键字
-	dir	string //临时文件
+	file string //目标文件
+	key string //匹配关键字
+	dir string //临时文件
 )
 
-func tmpfileWrite(tmpfilePath string,tmpString string) {
-	f, err := os.OpenFile(tmpfilePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
-	if err != nil {
-		log.Println("open file error :", err)
-		return
-	}
-	// 关闭文件
-	defer f.Close()
-	// 字节方式写入
-	_, err = f.Write([]byte(tmpString+"\n"))
-	if err != nil {
-		log.Println(err)
-		return
-	}
-}
 // 读取文件的每一行
 func readEachLineReader(filePath string,tmpfilePath string, keyString string) {
+	var timesNum = 0
 	start1 := time.Now()
 	FileHandle, err := os.Open(filePath)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	defer FileHandle.Close()
+	f, err := os.OpenFile(tmpfilePath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
+	if err != nil {
+		log.Println("open file error :", err)
+		return
+	}
 	lineReader := bufio.NewReader(FileHandle)
 	for {
-		// 相同使用场景下可以采用的方法
-		// func (b *Reader) ReadLine() (line []byte, isPrefix bool, err error)
-		// func (b *Reader) ReadBytes(delim byte) (line []byte, err error)
-		// func (b *Reader) ReadString(delim byte) (line string, err error)
 		line, _, err := lineReader.ReadLine()
 		if err == io.EOF {
 			break
 		}
 		res := strings.Contains(string(line), keyString)
 		if res{	
-			fmt.Println(`del:`+string(line))			
+			timesNum = timesNum+1	
 		}else{
-			tmpfileWrite(tmpfilePath,string(line))
+			// 字节方式写入
+			_, err = f.Write([]byte(string(line)+"\n"))
+			if err != nil {
+				log.Println(err)
+				return
+			}
 		}
-		//fmt.Println(string(line))
 	}
+	// 关闭文件
+	defer f.Close()
+	if timesNum>0{
+		os.Rename(tmpfilePath,file)
+	}else{
+		os.Remove(tmpfilePath)
+	}
+	//匹配删除的行数
+	fmt.Println("delete : ", timesNum)
 	fmt.Println("spend : ", time.Now().Sub(start1))
 }
 
@@ -68,16 +67,9 @@ func main(){
 	flag.Parse()
 	dir,_ := os.Getwd()
 	var tempfile string = string(dir)+`/temp.tmp`
-	readEachLineReader(file,tempfile,key)
-	fileInfo, err := os.Stat(tempfile)
-	if err != nil {
-		fmt.Println("Temporary file creation failed,can't overwrite!")
-		fmt.Println("**********Please enter -h for help!************")
-		log.Println(err)
-		return
-	}
-	
-	if len(fileInfo.Name())>0{
-		os.Rename(tempfile,file)
+	if len(file)>0 && len(key)>0{
+		readEachLineReader(file,tempfile,key)	
+	}else{
+		fmt.Println("Please enter -h for help!")
 	}
 }
