@@ -61,9 +61,7 @@ func readEachLineReader(filePath string,tmpfilePath string, keyString string) {
 	}
 	fmt.Println("spend : ", time.Now().Sub(start1))
 }
-func writeEachLinewriter(filePath string) {
 
-}
 func main(){
 	flag.StringVar(&file, "file", "", "log file path")
 	flag.StringVar(&key, "key", "", "keywords to match")
