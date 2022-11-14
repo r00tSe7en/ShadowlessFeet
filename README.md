@@ -34,7 +34,7 @@ cccccccccccc
 dddddddddddd
 
 # ./main -file test.txt -key "abc ,123"
-del:abc ,123~!@#$%^&*()_+{}|
+delete :  1  //这里显示的是删除的行数
 spend :  1.061807ms
 
 # cat test.txt
